@@ -38,6 +38,7 @@ button{
 	border-radius: 10px;
 	display: inline-block;
 	margin: 2px;
+	margin-left: 20px;
 }
 
 .dropdown {
