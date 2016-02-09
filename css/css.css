@@ -17,6 +17,17 @@ table {
 	table-layout: fixed;
 }
 
+button{
+	background-color: #dd2244;
+	border: none;
+	color: #def;
+	font-family: Consolas;
+	text-align: center;
+	font-size: 18px;
+	border-radius: 15px;
+	display: inline-block;
+}
+
 tr {
 	border-color: #ccc;
 }
