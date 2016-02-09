@@ -1,0 +1,98 @@
+body {
+	background: #321;
+	width: 100%;
+	margin: 0;
+}
+
+p {
+	color: #def;
+	font-family: Consolas;
+}
+
+table {
+	border-width: 2px;
+	border-style: solid;
+	border-color: #ccc;
+	background: #999;
+	table-layout: fixed;
+}
+
+tr {
+	border-color: #ccc;
+}
+
+td {
+	border-color: #ccc;
+	text-align: center;
+	border-radius: 5px;
+
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+div#content{
+	width: 100%;
+	margin: 0% 10%;
+	border-width: 1px;
+}
+
+td.notInPlay{
+	background: #542;
+}
+
+td.unvisited {
+	background: #646;
+	background-image: url("../img/taco.png");
+	background-size: cover;
+}
+
+@keyframes superbackground {
+	0% {background-color: red;}
+	50% {background-color: orange;}
+	100% {background-color: red;}
+}
+
+@media screen and (min-width: 1024px){
+	.super {
+		animation-name: superbackground;
+		animation-duration: 0.5s;
+		animation-iteration-count: infinite;
+	}
+
+}
+.super {
+	background: red !important;
+	background-image: url("../img/taco.png") !important;
+	background-size: cover !important;
+}
+
+td.visited {
+	background: #737;
+	background-image: url("../img/poop.png");
+	background-size: cover;
+}
+
+td.player {
+	background: #646;
+	background-image: url("../img/player.png") !important;
+	background-size: cover;
+	animation: hoovering 2s linear infinite;
+}
+
+#cheat {
+	font-color: white;
+}
+
+@keyframes itemshadow {
+
+}
+
+@keyframes hoovering {
+	0% {background-position: 0px -5px;}
+	50% {background-position: 0px 10px;}
+	100% {background-position: 0px -5px;}
+}
+
+.player.visited.unvisited {
+	animation: hoovering 1s linear infinite;
+}
