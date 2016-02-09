@@ -5,10 +5,13 @@
 	var debug = false;
 	var directions = ["LEFT","UP","RIGHT","DOWN"];
 	var dPos = [[-1,0],[0,-1],[1,0],[0,1]];
-	var gameSize = 10;
+	var gameSize;
+	var rocketProb = 25;
+	var superProb = 10;
+
 	var maxPoints = 0;
 	var level = [];
-	var player = {x: -1, y:-1, oldx: -1, oldy: -1, points: 0, hiscore: {levels: 5, tiles: 0, supertacos: 0, rockets: 0}, super: 0, rocket: 0};
+	var player = {x: -1, y:-1, oldx: -1, oldy: -1, points: 0, hiscore: {levels: 0, extraLevels: 0, tiles: 0, supertacos: 0, rockets: 0}, super: 0, rocket: 0};
 	var supertacocount = 0;
 	var rocketcount = 0;
 	var cheat = false;
@@ -21,6 +24,14 @@
 		player = JSON.parse(temp);
 		console.log(player);
 	};
+
+	//Check if there exists gamesize data
+	if(debug){
+	 	gameSize = 10;
+	} else {
+		gameSize = Math.sqrt(player.hiscore.levels) + player.hiscore.extraLevels + 4;
+		console.log("Level Size: " + gameSize);
+	}
 
 //Swipe stuff with Hammer js
 
@@ -59,10 +70,10 @@
 		// 		if tiles = (gameSize-2)^2, gamesize increases by 1.
 		// Each supertaco used in a completed level increases the probability of one appearing by 0.5%
 		//		and increases maxtiles by one. For every 10 tiles, number of supertacos that can appear increases by one.
-		// Each rocket successfully used increases the probability that a supertaco is transformed into a rocket by 0.1%, up 
+		// Each rocketburrito successfully used increases the probability that a supertaco is transformed into a rocket by 0.1%, up 
 		//		to a maximum of 25%
 		var retObj = {tiles: 0, supertacos: 0.0, rockets: 0.0};
-		retObj.tiles = player.hiscore.levels + player.hiscore.supertacos + 1;
+		retObj.tiles = player.hiscore.levels + player.hiscore.supertacos + player.hiscore.extraLevels + 4;
 		retObj.supertacos = player.hiscore.supertacos/200 + 0.05;
 		if(retObj.supertacos > 0.25){
 			retObj.supertacos = 0.25;
@@ -78,7 +89,7 @@
 
 	function generateLevel(){
 		//write out some stats on the player
-		document.getElementById("diff").innerHTML = "You have eaten " + player.hiscore.tiles + " TACOS and cleared " + parseInt(player.hiscore.levels - 5) + " LEVELS which has had " + player.hiscore.supertacos + " SUPERTACOS.<br> Your largest possible level is " + parseInt(player.hiscore.levels + player.hiscore.supertacos);
+		document.getElementById("diff").innerHTML = "You have eaten " + player.hiscore.tiles + " TACOS and cleared " + parseInt(player.hiscore.levels) + " LEVELS and eaten " + player.hiscore.supertacos + " SUPERTACOS.<br> Your largest possible level is " + parseInt(player.hiscore.levels + player.hiscore.supertacos + player.hiscore.extraLevels + 4); + " where " + parseInt(player.hiscore.extraLevels) + " are added difficulty."
 		//generate the level, difficulty based on stats
 		var difficulty = {};
 		difficulty = calculateDifficulty();
@@ -100,7 +111,8 @@
 		var circle = [0,0,0,1,1,1,2,2,2,3,3];
 		var jump = 0;
 		var rocket = 0;
-		var maxSuper = parseInt(difficulty.tiles/10);
+		var maxSuper = parseInt(difficulty.tiles/superProb);
+		var maxRocket = parseInt(difficulty.tiles/rocketProb);
 		var first = true;
 		for (var i = 0; i < parseInt(difficulty.tiles); i++) {
 			//var testedDirs = [];
@@ -125,7 +137,7 @@
 							if(Math.random()<difficulty.supertacos && maxSuper > 0){
 								if(first == false){ //do not make the first tile super
 									console.log("SUPERTILE");
-									if(Math.random() < difficulty.rockets && false){
+									if(Math.random() < difficulty.rockets && maxRocket > 0){
 										table.rows[pos[1]].cells[pos[0]].className += "rocket";
 										rocket = 2;
 									} else {
@@ -299,11 +311,14 @@
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 </div>
-	
+<div id="bottomButtons">
+	<button onclick="makeItHarder()">Make it HARDER!</button>
+	</div>
+	<div id="bottomButtons">
 	<button onclick="resetPlayer()">Delete all progress</button>
 	<button onclick="cheat()">Cheat - but no progression</button><div id="cheat" class="p"></div>
-	
-
+	</div>
+</div>
 </div>
 </div>
 <script type="text/javascript">
@@ -322,6 +337,7 @@
 	function resetPlayer(){
 		if(confirm("Are you sure you want to reset all your progress?")){
 			localStorage.removeItem("player");	
+			location.reload();
 		};
 	}
 
@@ -335,6 +351,11 @@
 	});
 	function patreon(){
 		window.open("https://www.patreon.com/broink?ty=h", '_blank');
+	}
+	function makeItHarder(){
+		player.hiscore.extraLevels += 1;
+		localStorage.setItem("player",JSON.stringify(player));
+		location.reload();
 	}
 </script>
 

@@ -82,6 +82,10 @@ div#content{
 	border-color: #ccc;
 }
 
+div#bottomButtons{
+	margin: auto;
+}
+
 td.notInPlay{
 	background: #542;
 }
