@@ -62,7 +62,7 @@ td.unvisited {
 }
 .super {
 	background: red !important;
-	background-image: url("../img/taco.png") !important;
+	background-image: url("../img/supertaco.png") !important;
 	background-size: cover !important;
 }
 
