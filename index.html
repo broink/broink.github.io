@@ -73,7 +73,7 @@
 		// Each rocketburrito successfully used increases the probability that a supertaco is transformed into a rocket by 0.1%, up 
 		//		to a maximum of 25%
 		var retObj = {tiles: 0, supertacos: 0.0, rockets: 0.0};
-		retObj.tiles = player.hiscore.levels + player.hiscore.supertacos + player.hiscore.extraLevels + 4;
+		retObj.tiles = (Math.pow(player.hiscore.levels,2) + player.hiscore.supertacos + player.hiscore.extraLevels)+2;
 		retObj.supertacos = player.hiscore.supertacos/200 + 0.05;
 		if(retObj.supertacos > 0.25){
 			retObj.supertacos = 0.25;
@@ -89,7 +89,7 @@
 
 	function generateLevel(){
 		//write out some stats on the player
-		document.getElementById("diff").innerHTML = "You have eaten " + player.hiscore.tiles + " TACOS and cleared " + parseInt(player.hiscore.levels) + " LEVELS and eaten " + player.hiscore.supertacos + " SUPERTACOS.<br> Your largest possible level is " + parseInt(player.hiscore.levels + player.hiscore.supertacos + player.hiscore.extraLevels + 4); + " where " + parseInt(player.hiscore.extraLevels) + " are added difficulty."
+		document.getElementById("diff").innerHTML = "You have eaten " + player.hiscore.tiles + " TACOS and cleared " + parseInt(player.hiscore.levels) + " LEVELS and eaten " + player.hiscore.supertacos + " SUPERTACOS.<br> Your largest possible level is " + parseInt(Math.pow(player.hiscore.levels,2) + player.hiscore.supertacos + player.hiscore.extraLevels + 4); + " where " + parseInt(player.hiscore.extraLevels) + " are added difficulty."
 		//generate the level, difficulty based on stats
 		var difficulty = {};
 		difficulty = calculateDifficulty();
@@ -114,48 +114,41 @@
 		var maxSuper = parseInt(difficulty.tiles/superProb);
 		var maxRocket = parseInt(difficulty.tiles/rocketProb);
 		var first = true;
+		var prevDirection;
 		for (var i = 0; i < parseInt(difficulty.tiles); i++) {
-			//var testedDirs = [];
-			//for(var j = 0; j < directions.length; j++){
-				var direction = random(4)-1;
-			//	if(testedDirs.indexOf(directions[direction]) > -1){
-					//Direction is tested, cannot go there
-			//	} else {
-			//		testedDirs.push(directions[direction]);
-					var newPos = [parseInt([pos[0] + (1+jump + rocket)*dPos[direction][0]]),parseInt([pos[1]+(1+jump + rocket)*dPos[direction][1]]) ];
-					if( (newPos[0] > 0 && newPos[0] < gameSize) && (newPos[1] > 0 && newPos[1] < gameSize) ){
-						//We are not moving outside the edge
-						if(table.rows[newPos[1]].cells[newPos[0]].className == "notInPlay"){
-							console.log("creating Tile at "+newPos);
-							//Tile is ok
-							pos = newPos;
-							if(jump == 1) jump = 0;
-							if(rocket == 2) rocket = 0;
-							//console.log("pos: " + pos);
-							table.rows[pos[1]].cells[pos[0]].className = "unvisited";
-							//Randomly generate a SUPERTACO which makes you do a jump
-							if(Math.random()<difficulty.supertacos && maxSuper > 0){
-								if(first == false){ //do not make the first tile super
-									console.log("SUPERTILE");
-									if(Math.random() < difficulty.rockets && maxRocket > 0){
-										table.rows[pos[1]].cells[pos[0]].className += "rocket";
-										rocket = 2;
-									} else {
-										table.rows[pos[1]].cells[pos[0]].className += " super";
-										jump = 1;
-									};
-									maxSuper--;
-								};
+			var direction = random(4)-1;
+			var newPos = [parseInt([pos[0] + (1+jump + rocket)*dPos[direction][0]]),parseInt([pos[1]+(1+jump + rocket)*dPos[direction][1]]) ];
+			if( (newPos[0] > 0 && newPos[0] < gameSize) && (newPos[1] > 0 && newPos[1] < gameSize) ){
+				//We are not moving outside the edge
+				if(table.rows[newPos[1]].cells[newPos[0]].className == "notInPlay"){
+					console.log("creating Tile at "+newPos);
+					//Tile is ok
+					pos = newPos;
+					if(jump == 1) jump = 0;
+					if(rocket == 2) rocket = 0;
+					table.rows[pos[1]].cells[pos[0]].className = "unvisited";
+					//Randomly generate a SUPERTACO which makes you do a jump
+					if(Math.random()<difficulty.supertacos && maxSuper > 0){
+						if(first == false){ //do not make the first tile super
+							console.log("SUPERTILE");
+							if(Math.random() < difficulty.rockets && maxRocket > 0){
+								table.rows[pos[1]].cells[pos[0]].className += "rocket";
+								rocket = 2;
+							} else {
+								table.rows[pos[1]].cells[pos[0]].className += " super";
+								jump = 1;
 							};
-							first = false;
-							steps += 1;
-							if(!restart){
-								level.push(parseInt(direction));
-							};
+							maxSuper--;
 						};
 					};
-			//	};
-			//};
+					first = false;
+					steps += 1;
+					if(!restart){
+						level.push(parseInt(direction));
+					};
+				};
+			}; 
+
 		};
 		maxPoints = steps;
 		console.log(level);
@@ -208,6 +201,9 @@
 				player.y = player.oldy;
 			}
 		};
+		if(key == 82 - 37){
+			reloadPage();
+		}
 		if(debug == true){
 			document.getElementById("x_pos").innerHTML = player.x;
 			document.getElementById("y_pos").innerHTML = player.y;
@@ -247,6 +243,9 @@
 			
 			if(player.super == 1){
 				cell.className += " super";
+			}
+			if(player.rocket == 1){
+				cell.className += " rocket";
 			}
 			if(player.points == maxPoints){
 				if(cheat == true){
@@ -292,10 +291,10 @@
 	</div>
 	<div id="stats">
 		<div id="pts"><p>Points: <span id="points"> </span></p></div>
-		<div id="difficulty"><p><span id="diff"></span><button onclick="reloadPage()">Give up</button><button onclick="patreon()">Support me on Patreon</button></p></div>
+		<div id="difficulty"><p><span id="diff"></span><button onclick="reloadPage()">Give up (r)</button><button onclick="patreon()">Support me on Patreon</button></p></div>
 	</div>
 
-	<table width=700 height=700 id="gameTable">
+	<table width=650 height=650 id="gameTable">
 	<script type="text/javascript">
 		createGame();
 	</script>
