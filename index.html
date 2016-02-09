@@ -149,6 +149,7 @@
 		console.log(level);
 		localStorage.setItem("level",JSON.stringify(level));
 		localStorage.setItem("startpos",JSON.stringify([startx,starty]));
+		document.getElementById("points").innerHTML = 0 + "/" + maxPoints;
 	}
 </script>
 <link rel="stylesheet" type="text/css" href="css/css.css">
@@ -260,16 +261,25 @@
 	}
 </script>
 <div id="content">
-	<div id="info">
-		 <p>
-		 Instructions: Eat all the taco. If you eat a SUPERTACO you poop with the force of a thousand sons, and must jump over a tile. </p>
-		 <p>[not yet implemented]If you eat a ROCKETBURRITO you FART SO HARD THAT YOU DOUBLEJUMP![/]</p>
-		 <p>Game is unforgiving. Shit yourself into a corner? Give up.</p>
-		 <p>All levels are randomly generated with increasing potential difficulty for each leven you complete. The random generation guarantees that the level is solvable.</p>
-		 
+	<div id="info" class="dropdown"><span><h1>Instructions</h1></span>
+	<div id="info" class="dropdown-content">
+		<h3>Goal:</h3>
+		<p>Eat all the taco. </p>
+		<p>All levels are randomly generated.</p>
+		<p>Game gets possible longer for each level you complete.</p>
+		<p>If you eat a SUPERTACO you poop with the force of a thousand sons, and must jump over a tile. Their spawnrate increases with each 10 levels you complete.</p>
+		<p>Game is unforgiving. Shit yourself into a corner? Give up.</p>
+		<h3>[not yet implemented]</h3>
+		<p>If you eat a ROCKETBURRITO you FART SO HARD THAT YOU DOUBLEJUMP!</p>
+		<p>When you complete a level number equal to the size of the board, it gets bigger</p>
+		<p>A bit smarter level-generation that does not get stuck in walls or itself</p>
+		<h3>[/]</h3>
+		<p>Swiping on mobile works, but is a bit shady. You have to swipe on the game board.</p>
+		<p>Reloading with ctrl+R does not work for some reason. Do not know why =(</p>
+	</div>
 	</div>
 	<div id="stats">
-		<div id="pts"><p>Points <span id="points">0</span></p></div>
+		<div id="pts"><p>Points: <span id="points"> </span></p></div>
 		<div id="difficulty"><p><span id="diff"></span></p></div>
 	</div>
 
@@ -292,7 +302,7 @@
 
 	<button onclick="reloadPage()">Give up</button>
 	<button onclick="resetPlayer()">Delete all progress</button>
-	<button onclick="cheat()">Cheat - but no progression</button><div id="cheat"></div>
+	<button onclick="cheat()">Cheat - but no progression</button><div id="cheat" class="p"></div>
 
 
 
