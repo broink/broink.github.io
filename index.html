@@ -89,7 +89,8 @@
 
 	function generateLevel(){
 		//write out some stats on the player
-		document.getElementById("diff").innerHTML = "You have eaten " + player.hiscore.tiles + " TACOS and cleared " + parseInt(player.hiscore.levels) + " LEVELS and eaten " + player.hiscore.supertacos + " SUPERTACOS.<br> Your largest possible level is " + parseInt(Math.pow(player.hiscore.levels,2) + player.hiscore.supertacos + player.hiscore.extraLevels + 4); + " where " + parseInt(player.hiscore.extraLevels) + " are added difficulty."
+		document.getElementById("diff").innerHTML = "You have eaten " + player.hiscore.tiles + " TACOS and cleared " + parseInt(player.hiscore.levels) + " LEVELS and eaten " + player.hiscore.supertacos + " SUPERTACOS.<br>";
+		//Your largest possible level is " + parseInt(Math.pow(player.hiscore.levels,2) + player.hiscore.supertacos + player.hiscore.extraLevels + 4); + " where " + parseInt(player.hiscore.extraLevels) + " are added difficulty."
 		//generate the level, difficulty based on stats
 		var difficulty = {};
 		difficulty = calculateDifficulty();
