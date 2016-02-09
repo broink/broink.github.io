@@ -7,12 +7,15 @@ body {
 p, #cheat {
 	color: #def;
 	font-family: Consolas;
+	margin: 10px;
+	padding-bottom: 10px;
 }
 
 h1, h2, h3 {
 	color: #cde;
 	font-family: Consolas;
 	text-transform: uppercase;
+	margin: 0px;
 }
 
 table {
@@ -21,6 +24,8 @@ table {
 	border-color: #ccc;
 	background: #999;
 	table-layout: fixed;
+	margin-top: -10px;
+	margin-bottom: -10px;
 }
 
 button{
@@ -30,8 +35,9 @@ button{
 	font-family: Consolas;
 	text-align: center;
 	font-size: 18px;
-	border-radius: 15px;
+	border-radius: 10px;
 	display: inline-block;
+	margin: 2px;
 }
 
 .dropdown {
@@ -47,6 +53,9 @@ button{
 	box-shadow: 0px 8px 16px 0px rgba(0.1,0.1,0.1,0.3);
 	padding: 12px 16px;
 	z-index: 1;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #ddd;
 }
 
 .dropdown:hover .dropdown-content {
@@ -60,16 +69,16 @@ tr {
 td {
 	border-color: #ccc;
 	text-align: center;
-	border-radius: 5px;
+	border-radius: 4px;
 
 	background-repeat: no-repeat;
 	background-position: center;
 }
 
 div#content{
-	width: 100%;
 	margin: 0% 10%;
 	border-width: 1px;
+	border-color: #ccc;
 }
 
 td.notInPlay{

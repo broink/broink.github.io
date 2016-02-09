@@ -78,7 +78,7 @@
 
 	function generateLevel(){
 		//write out some stats on the player
-		document.getElementById("diff").innerHTML = "You have eaten " + player.hiscore.tiles + " TACOS<br> and cleared " + parseInt(player.hiscore.levels - 5) + " LEVELS<br> which has had " + player.hiscore.supertacos + " SUPERTACOS.<br> Your largest possible level is " + parseInt(player.hiscore.levels + player.hiscore.supertacos);
+		document.getElementById("diff").innerHTML = "You have eaten " + player.hiscore.tiles + " TACOS and cleared " + parseInt(player.hiscore.levels - 5) + " LEVELS which has had " + player.hiscore.supertacos + " SUPERTACOS.<br> Your largest possible level is " + parseInt(player.hiscore.levels + player.hiscore.supertacos);
 		//generate the level, difficulty based on stats
 		var difficulty = {};
 		difficulty = calculateDifficulty();
@@ -301,12 +301,10 @@
 </div>
 
 	<button onclick="reloadPage()">Give up</button>
+	<button onclick="patreon()">Support me on Patreon</button><br>
 	<button onclick="resetPlayer()">Delete all progress</button>
 	<button onclick="cheat()">Cheat - but no progression</button><div id="cheat" class="p"></div>
-
-
-
-
+	
 
 </div>
 </div>
@@ -337,6 +335,9 @@
 	hammertime.on("swipeleft swipeup swiperight swipedown", function(ev){
 		moveFunction(ev);
 	});
+	function patreon(){
+		window.open("https://www.patreon.com/broink?ty=h", '_blank');
+	}
 </script>
 
 </body>
