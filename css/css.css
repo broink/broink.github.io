@@ -122,6 +122,12 @@ td.visited {
 	background-size: cover;
 }
 
+.rocket {
+	background: blue !important;
+	background-image: url("../img/rocketburrito.png") !important;
+	background-size: cover !important;
+}
+
 td.player {
 	background: #646;
 	background-image: url("../img/player.png") !important;

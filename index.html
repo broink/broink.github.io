@@ -6,7 +6,7 @@
 	var directions = ["LEFT","UP","RIGHT","DOWN"];
 	var dPos = [[-1,0],[0,-1],[1,0],[0,1]];
 	var gameSize;
-	var rocketProb = 25;
+	var rocketProb = 10;
 	var superProb = 10;
 
 	var maxPoints = 0;
@@ -29,7 +29,7 @@
 	if(debug){
 	 	gameSize = 10;
 	} else {
-		gameSize = Math.sqrt(player.hiscore.levels) + player.hiscore.extraLevels + 4;
+		gameSize = Math.sqrt(player.hiscore.levels + 2*player.hiscore.extraLevels) + 4;
 		console.log("Level Size: " + gameSize);
 	}
 
@@ -73,12 +73,12 @@
 		// Each rocketburrito successfully used increases the probability that a supertaco is transformed into a rocket by 0.1%, up 
 		//		to a maximum of 25%
 		var retObj = {tiles: 0, supertacos: 0.0, rockets: 0.0};
-		retObj.tiles = (Math.pow(player.hiscore.levels,2) + player.hiscore.supertacos + player.hiscore.extraLevels)+2;
+		retObj.tiles = (Math.pow(player.hiscore.levels+ player.hiscore.supertacos + player.hiscore.extraLevels,2))+2;
 		retObj.supertacos = player.hiscore.supertacos/200 + 0.05;
 		if(retObj.supertacos > 0.25){
 			retObj.supertacos = 0.25;
 		};
-		retObj.rockets = player.hiscore.rockets + 0.01;
+		retObj.rockets = player.hiscore.rockets + 0.1;
 		if(retObj.rockets > 0.25){
 			retObj.rockets = 0.25;
 		};
@@ -132,7 +132,7 @@
 						if(first == false){ //do not make the first tile super
 							console.log("SUPERTILE");
 							if(Math.random() < difficulty.rockets && maxRocket > 0){
-								table.rows[pos[1]].cells[pos[0]].className += "rocket";
+								table.rows[pos[1]].cells[pos[0]].className += " rocket";
 								rocket = 2;
 							} else {
 								table.rows[pos[1]].cells[pos[0]].className += " super";
@@ -231,7 +231,7 @@
 				player.super = 0;
 			};
 			if(hasClass(cell,"rocket")){
-				player.rocket = 1;
+				player.rocket = 2;
 				rocketcount++;
 			} else {
 				player.rocket = 0;
@@ -244,7 +244,7 @@
 			if(player.super == 1){
 				cell.className += " super";
 			}
-			if(player.rocket == 1){
+			if(player.rocket > 0){
 				cell.className += " rocket";
 			}
 			if(player.points == maxPoints){
