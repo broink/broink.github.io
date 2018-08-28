@@ -103,12 +103,26 @@ td.unvisited {
 }
 
 @keyframes rocketbackground {
-	0% {background-color: blue;}
-	50% {background-color: aqua;}
-	100% {background-color: blue;}
+	0% {background-color: aqua;}
+	50% {background-color: blue;}
+	100% {background-color: aqua;}
 }
 
-@media screen and (min-width: 1024px){
+@keyframes movetobackground{
+	50% {background-color:green;}
+}
+
+@keyframes cantmovetobackground {
+	50% {background-color:pink;}
+}
+
+@keyframes playerbackground {
+	0% {background-color: black}
+	50% {background-color: white}
+	100% {background-color: grey}
+
+}
+@media screen{
 	.super {
 		animation-name: superbackground;
 		animation-duration: 0.5s;
@@ -119,8 +133,26 @@ td.unvisited {
 		animation-duration: 0.3s;
 		animation-iteration-count: infinite;
 	}
+
+	.moveto {
+		animation-name: movetobackground;
+		animation-duration: 0.7s;
+		animation-iteration-count: infinite;
+	}
+	.cantmoveto {
+		animation-name: cantmovetobackground;
+		animation-duration: 0.7s;
+		animation-iteration-count: infinite;
+	}
+
+	td.player {
+		animation-name: playerbackground;
+		animation-duration: 1.5s;
+		animation-iteration-count: infinite;
+		animation: hoovering 2s linear infinite;
+	}
 }
-.super {
+.super{
 	background: red !important;
 	background-image: url("../img/supertaco.png") !important;
 	background-size: cover !important;
@@ -132,7 +164,7 @@ td.visited {
 	background-size: cover;
 }
 
-.rocket {
+.rocket{
 	background: blue !important;
 	background-image: url("../img/rocketburrito.png") !important;
 	background-size: cover !important;
@@ -142,7 +174,6 @@ td.player {
 	background: #646;
 	background-image: url("../img/player.png") !important;
 	background-size: cover;
-	animation: hoovering 2s linear infinite;
 }
 
 #cheat {
