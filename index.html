@@ -32,6 +32,9 @@
 		player = JSON.parse(temp);
 		console.log('Player',player);
 	};
+	if(localStorage.level === null){
+		localStorage.setItem('level','[]')
+	}
 
 	//Check if there exists gamesize data
 	if(debug){
@@ -120,6 +123,9 @@
 		const directions = ["L","U","R","D"]
 		let strlevel = []
 		var oldlevel = JSON.parse(localStorage.getItem('level'))
+		if(oldlevel === null){
+			oldlevel = [];
+		}
 		if(oldlevel.length === 0){
 			var starty = random(table.rows.length-3)+1;
 			var startx = random(table.rows[0].cells.length-3)+1;
