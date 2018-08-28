@@ -458,6 +458,9 @@ function checkNewMoves(){
 	function proposeAsTutorial(){
 		window.open('mailto:broink@gmail.com?subject=This would make an awesome tutorial level for TacoPooper!&body=level:'+JSON.parse(localStorage.getItem('level')).join(".")+'_startpos:'+localStorage.getItem('startpos').replace(',','_')+'')
 	}
+	function proposeChallenge(){
+		window.open('mailto:broink@gmail.com?subject=This would make an awesome challenge level for TacoPooper!&body=level:'+JSON.parse(localStorage.getItem('level')).join(".")+'_startpos:'+localStorage.getItem('startpos').replace(',','_')+'')
+	}
 </script>
 <div id="content">
 	<div id="info" class="dropdown"><span><h1>Instructions &#x27B2;</h1></span>
@@ -478,8 +481,9 @@ function checkNewMoves(){
 	</div>
 	<div id="stats">
 		<div id="pts"><p>Points: <span id="points"> </span></p></div>
-		<div id="difficulty"><p><span id="diff"></span><button onclick="reloadPage()"><h1>Try again (r)</h1></button><button onclick="patreon()">Support me on Patreon</button>
-		<button onclick="proposeAsTutorial()">Propose as tutorial</button></p></div>
+		<div id="difficulty"><p><span id="diff"></span><button onclick="reloadPage()"><h1>Try again (r)</h1></button><button onclick="patreon()">Support me on Patreon</button><br>
+		<button onclick="proposeAsTutorial()">Propose this level as a tutorial</button><br>
+		<button onclick="proposeChallenge()">Propose this level as a challenge</button></p></div>
 	</div>
 
 	<table width=600 height=600 id="gameTable">
