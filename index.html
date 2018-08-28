@@ -10,16 +10,23 @@
 	<!-- Enable swiping -->
 <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 <script>
+var tutorialLevels = [
+	{level:["U"], startpos:[1,1]},
+	{level:["U","L","U"], startpos:[2,2]},
+	{level:["D","R","D","D","L","U","L","D","L","U","L","U","R","U","R","U","R_s","U","D","R","U","R","R","D"],startpos:[3,3]}
+	//{level:["L","L","U","L_s","U","R_r","D","D_s"],startpos:[4,4]}
+];
 	var debug = false;
 	var directions = ["LEFT","UP","RIGHT","DOWN"];
 	var dPos = [[-1,0],[0,-1],[1,0],[0,1]];
 	var gameSize;
 	var rocketProb = 10;
 	var superProb = 10;
+	var isTutorialLevel = false;
 
 	var maxPoints = 0;
 	var level = [];
-	var player = {x: -1, y:-1, oldx: -1, oldy: -1, points: 0, hiscore: {levels: 0, extraLevels: 0, tiles: 0, supertacos: 0, rockets: 0}, super: 0, rocket: 0};
+	var player = {x: -1, y:-1, oldx: -1, oldy: -1, points: 0, hiscore: {levels: 0, extraLevels: 0, tiles: 0, supertacos: 0, rockets: 0}, super: 0, rocket: 0, tutorial: 0};
 	var supertacocount = 0;
 	var rocketcount = 0;
 	var cheat = false;
@@ -32,7 +39,7 @@
 		player = JSON.parse(temp);
 		console.log('Player',player);
 	};
-	if(localStorage.level === null){
+	if(localStorage.getItem('level') === null){
 		localStorage.setItem('level','[]')
 	}
 
@@ -122,13 +129,19 @@
 		var prevDirection;
 		const directions = ["L","U","R","D"]
 		let strlevel = []
-		var oldlevel = JSON.parse(localStorage.getItem('level'))
-		if(oldlevel === null){
-			oldlevel = [];
+		if(player.tutorial < tutorialLevels.length){
+				var oldlevel = tutorialLevels[player.tutorial].level;
+				var startx = tutorialLevels[player.tutorial].startpos[0];
+				var starty = tutorialLevels[player.tutorial].startpos[1];
+				isTutorialLevel = true;
+		} else {
+				var oldlevel = JSON.parse(localStorage.getItem('level')) ||[];
+				var starty;// = random(table.rows.length-3)+1;
+				var startx;// = random(table.rows[0].cells.length-3)+1;
 		}
 		if(oldlevel.length === 0){
-			var starty = random(table.rows.length-3)+1;
-			var startx = random(table.rows[0].cells.length-3)+1;
+			starty = Math.floor(random(table.rows.length)/2)+2;
+			startx = Math.floor(random(table.rows[0].cells.length)/2)+2;
 			console.log("start: "+startx+", "+starty);
 			player.x = startx;
 			player.y = starty;
@@ -139,7 +152,7 @@
 			for (var i = 0; i < parseInt(difficulty.tiles); i++) {
 				let direction = random(4)-1;
 				var newPos = [parseInt([pos[0] + (1+jump + rocket)*dPos[direction][0]]),parseInt([pos[1]+(1+jump + rocket)*dPos[direction][1]]) ];
-				if( (newPos[0] > 0 && newPos[0] < gameSize) && (newPos[1] > 0 && newPos[1] < gameSize) ){
+				if( (newPos[0] >= 0 && newPos[0] < gameSize) && (newPos[1] >= 0 && newPos[1] < gameSize) ){
 					//We are not moving outside the edge
 					if(table.rows[newPos[1]].cells[newPos[0]].className == "notInPlay"){
 						console.log("creating Tile at "+newPos);
@@ -175,9 +188,11 @@
 
 			};
 		} else {
-			oldstart = JSON.parse(localStorage.getItem('startpos'));
-			startx = oldstart[0];
-			starty = oldstart[1];
+			if(!isTutorialLevel){
+				oldstart = JSON.parse(localStorage.getItem('startpos'))||[0,0];
+				var startx = oldstart[0];
+				var starty = oldstart[1];
+			}
 			player.x = startx;
 			player.y = starty;
 			player.oldx = startx;
@@ -189,7 +204,7 @@
 				let direction = directions.indexOf(oldlevel[i].split('_')[0])//random(4)-1;
 				var newPos = [parseInt([pos[0] + (1+jump + rocket)*dPos[direction][0]]),parseInt([pos[1]+(1+jump + rocket)*dPos[direction][1]]) ];
 				// Should always be true, but leave it in for now
-				if( (newPos[0] > 0 && newPos[0] < gameSize) && (newPos[1] > 0 && newPos[1] < gameSize) ){
+				if( (newPos[0] >= 0 && newPos[0] < gameSize) && (newPos[1] >= 0 && newPos[1] < gameSize) ){
 					//We are not moving outside the edge
 					if(table.rows[newPos[1]].cells[newPos[0]].className == "notInPlay"){
 						console.log("creating Tile at "+newPos);
@@ -212,22 +227,6 @@
 								jump = 1;
 							}
 						}
-						/*
-						if(Math.random()<difficulty.supertacos && maxSuper > 0){
-							if(first == false){ //do not make the first tile super
-								console.log("SUPERTILE");
-								if(Math.random() < difficulty.rockets && maxRocket > 0){
-									table.rows[pos[1]].cells[pos[0]].className += " rocket";
-									strlevel[strlevel.length-1]+="_r";
-									rocket = 2;
-								} else {
-									table.rows[pos[1]].cells[pos[0]].className += " super";
-									strlevel[strlevel.length-1]+="_s";
-									jump = 1;
-								};
-								maxSuper--;
-							};
-						};*/
 						first = false;
 						steps += 1;
 						if(!restart){
@@ -435,6 +434,9 @@ function checkNewMoves(){
 						location.reload();
 					};
 				} else {
+					if(isTutorialLevel){
+						player.tutorial++;
+					}
 					//Update the hiscore
 					player.points = 0;
 					player.super = 0;
@@ -453,30 +455,30 @@ function checkNewMoves(){
 			return true;
 		};
 	}
+	function proposeAsTutorial(){
+		window.open('mailto:broink@gmail.com?subject=This would make an awesome tutorial level for TacoPooper!&body=level:'+JSON.parse(localStorage.getItem('level')).join(".")+'_startpos:'+localStorage.getItem('startpos').replace(',','_')+'')
+	}
 </script>
 <div id="content">
-	<div id="info" class="dropdown"><span><h1>Instructions</h1></span>
+	<div id="info" class="dropdown"><span><h1>Instructions &#x27B2;</h1></span>
 	<div id="info" class="dropdown-content">
 		<h3>Goal:</h3>
 		<p>Eat all the taco. </p>
-		<p>All levels are randomly generated.</p>
-		<p>Game gets possible longer for each level you complete.</p>
-		<p>If you eat a SUPERTACO you poop with the force of a thousand sons, and must jump over a tile. Their spawnrate increases with each 10 levels you complete.</p>
-		<p>Game is unforgiving. Shit yourself into a corner? Give up.</p>
-		<h3>[not yet implemented]</h3>
-		<p>If you eat a ROCKETBURRITO you FART SO HARD THAT YOU DOUBLEJUMP!</p>
+		<p>All levels are randomly generated, but have a guarateed solution.</p>
+		<p>Game gets possible longer, and thus harder, for each level you complete.</p>
+		<p><img src="./img/supertaco.png" class="super" width=100 height=100/><br>If you eat a <em>SUPERTACO</em> (which is really spicy), you poop really hard and are forced to jump over one tile. They become more common the more levels you complete.</p>
+		<p><img srpc="./img/rocketburrito.png" class="rocket" width=100 height=100/><br>A ROCKETBURRITO is both stronger and rarer than a supertaco, and forces you to jump over 2 tiles.</p>
+		<p>The game is unforgiving by design. Shit yourself into a corner? Give up and try again (hit r).</p>
 		<p>When you complete a level number equal to the size of the board, it gets bigger</p>
-		<p>A bit smarter level-generation that does not get stuck in walls or itself</p>
-		<p>Some way to retry a level</p>
-		<h3>[/]</h3>
-		<p>Swiping on mobile works, but is a bit shady. You have to swipe on the game board.</p>
+		<p>Swiping on mobile works, but is a bit shady. You have to swipe on the game board. You can also tap/click on the green tiles to move there.</p>
 		<p>Reloading with ctrl+R does not work for some reason. Do not know why =(</p>
-		<p>Found a bug? broink@gmail.com</p>
+		<p>Found a bug? <a href="mailto:broink@gmail.com">e-mail me</a></p>
 	</div>
 	</div>
 	<div id="stats">
 		<div id="pts"><p>Points: <span id="points"> </span></p></div>
-		<div id="difficulty"><p><span id="diff"></span><button onclick="reloadPage()">Give up (r)</button><button onclick="patreon()">Support me on Patreon</button></p></div>
+		<div id="difficulty"><p><span id="diff"></span><button onclick="reloadPage()"><h1>Give up (r)</h1></button><button onclick="patreon()">Support me on Patreon</button>
+		<button onclick="proposeAsTutorial()">Propose as tutorial</button></p></div>
 	</div>
 
 	<table width=600 height=600 id="gameTable">
@@ -487,11 +489,11 @@ function checkNewMoves(){
 	<div id="googleads">
 </div>
 <div id="bottomButtons">
-	<button onclick="makeItHarder()">Make it HARDER!</button>
+	<button onclick="makeItHarder()"><h1>Make it HARDER!</h1></button>
 	</div>
 	<div id="bottomButtons">
-	<button onclick="resetPlayer()">Delete all progress</button>
-	<button onclick="cheat()">Cheat - but no progression</button><div id="cheat" class="p"></div>
+	<button onclick="resetPlayer()"><h2>Delete all progress</h2></button><br>
+	<button onclick="cheat()"><h2>Cheat - but no progression</h2></button><div id="cheat" class="p"></div>
 	</div>
 </div>
 </div>
@@ -500,19 +502,22 @@ function checkNewMoves(){
 	generateLevel();
 	checkNewMoves();
 	function cheat(){
-		cheat = true;
-		var str = ""
-		for(var i = 0; i < level.length; i++){
-			str += (directions[level[i]] + " ");
+		if(confirm("Are you sure you want to cheat? This will show you the solution, but you will not get any progress when you complete the level")){
+			cheat = true;
+			var str = ""
+			for(var i = 0; i < level.length; i++){
+				str += (directions[level[i]] + " ");
+			}
+			document.getElementById("cheat").innerHTML = str;
 		}
-		document.getElementById("cheat").innerHTML = str;
-	}
+		}
+
 	function reloadPage(){
 		location.reload();
 	}
 	function resetPlayer(){
 		if(confirm("Are you sure you want to reset all your progress?")){
-			localStorage.removeItem("player");
+			localStorage.clear();
 			location.reload();
 		};
 	}
