@@ -92,8 +92,8 @@ td.notInPlay{
 
 td.unvisited {
 	background: #646;
-	background-image: url("../img/taco.png");
-	background-size: cover;
+	/*background-image: url("../img/taco.png");*/
+	/*background-size: cover;*/
 }
 
 @keyframes superbackground {
@@ -160,7 +160,7 @@ td.unvisited {
 
 td.visited {
 	background: #737;
-	background-image: url("../img/poop.png");
+	/*background-image: url("../img/poop.png");*/
 	background-size: cover;
 }
 

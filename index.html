@@ -1,15 +1,91 @@
 <html>
 <head>
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!--<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script>
   (adsbygoogle = window.adsbygoogle || []).push({
     google_ad_client: "ca-pub-7313568216979367",
     enable_page_level_ads: true
   });
-</script>
+</script>-->
 	<!-- Enable swiping -->
 <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 <script>
+		function moveFunction(event,elem=null){
+
+			var key = 0;
+			if(event.type.indexOf("swipe") > -1){
+				if(event.type == "swipeleft"){
+					key = 0;
+				} else if(event.type == "swipeup"){
+					key = 1;
+				} else if(event.type == "swiperight"){
+					key = 2;
+				} else if (event.type == "swipedown"){
+					key = 3;
+				}
+			} else if(event.type.indexOf("click") > -1 || event.type.indexOf('tap') > -1) {
+				if(elem !== null){
+					elemRow = parseInt(elem.parentElement.id);
+					elemCol = elem.cellIndex;
+					console.log(player.x, player.y,elemCol,elemRow);
+					if(hasClass(elem,'moveto')){
+						if(player.x !== elemCol){
+							if(elemCol > player.x){
+								key = 2;
+							} else {
+								key = 0;
+							}
+						} else{
+							if(elemRow > player.y){
+								key = 3;
+							} else {
+								key = 1;
+							}
+						}
+					} else {
+						key = null;
+					}
+				}
+			}
+			else {
+				key = event.keyCode - 37;
+				event.preventDefault();
+			};
+			var allowMove = false;
+			for (var i = directions.length; i >= 0; i--) {
+				if(i == key){
+					if( ((player.x + (1+player.super+player.rocket)*dPos[key][0]) >= 0)
+						&& ((player.x + (1+player.super+player.rocket)*dPos[key][0]) < gameSize)
+						&& ((player.y + (1+player.super+player.rocket)*dPos[key][1]) >= 0)
+						&& ((player.y + (1+player.super+player.rocket)*dPos[key][1]) < gameSize) ){
+						allowMove = true;
+					};
+				};
+			};
+			if(allowMove == true){
+				console.log('dPos['+key+']',dPos[key]);
+				player.oldx = player.x;
+				player.oldy = player.y;
+				player.x += (1+player.super+player.rocket)*dPos[key][0];
+				player.y += (1+player.super+player.rocket)*dPos[key][1];
+				if(!movePlayer()){
+					player.x = player.oldx;
+					player.y = player.oldy;
+				}
+				// player has been moved
+				checkNewMoves();
+	
+	
+			};
+			if(key == 82 - 37){
+				// r
+				reloadPage();
+			}
+			if(debug == true){
+				document.getElementById("x_pos").innerHTML = player.x;
+				document.getElementById("y_pos").innerHTML = player.y;
+			};
+		}
 var tutorialLevels = [
 	{level:["U"], startpos:[1,1]},
 	{level:["U","L","U"], startpos:[2,2]},
@@ -91,7 +167,14 @@ var tutorialLevels = [
 		// Each rocketburrito successfully used increases the probability that a supertaco is transformed into a rocket by 0.1%, up
 		//		to a maximum of 25%
 		var retObj = {tiles: 0, supertacos: 0.0, rockets: 0.0};
-		retObj.tiles = (Math.pow(player.hiscore.levels+ player.hiscore.supertacos + player.hiscore.extraLevels,2))+2;
+		var l,s,ex;
+		l = (player.hiscore.levels)?player.hiscore.levels:0;
+		player.hiscore.levels = l;
+		s = (player.hiscore.supertacos)?player.hiscore.supertacos:0;
+		player.hiscore.supertacos = s;
+		ex = (player.hiscore.extraLevels)?player.hiscore.extraLevels:0;
+		player.hiscore.extraLevels = ex;
+		retObj.tiles = (Math.pow(l + s + ex,2))+2;
 		retObj.supertacos = player.hiscore.supertacos/200 + 0.05;
 		if(retObj.supertacos > 0.25){
 			retObj.supertacos = 0.25;
@@ -151,7 +234,9 @@ var tutorialLevels = [
 			var pos = [startx,starty];
 			for (var i = 0; i < parseInt(difficulty.tiles); i++) {
 				let direction = random(4)-1;
-				var newPos = [parseInt([pos[0] + (1+jump + rocket)*dPos[direction][0]]),parseInt([pos[1]+(1+jump + rocket)*dPos[direction][1]]) ];
+				var newPos = [
+					parseInt([pos[0] + (1+jump + rocket)*dPos[direction][0]]),
+					parseInt([pos[1] + (1+jump + rocket)*dPos[direction][1]]) ];
 				if( (newPos[0] >= 0 && newPos[0] < gameSize) && (newPos[1] >= 0 && newPos[1] < gameSize) ){
 					//We are not moving outside the edge
 					if(table.rows[newPos[1]].cells[newPos[0]].className == "notInPlay"){
@@ -162,6 +247,7 @@ var tutorialLevels = [
 						if(jump == 1) jump = 0;
 						if(rocket == 2) rocket = 0;
 						table.rows[pos[1]].cells[pos[0]].className = "unvisited";
+						table.rows[pos[1]].cells[pos[0]].innerHTML = "🌮";
 						//Randomly generate a SUPERTACO which makes you do a jump
 						if(Math.random()<difficulty.supertacos && maxSuper > 0){
 							if(first == false){ //do not make the first tile super
@@ -177,7 +263,9 @@ var tutorialLevels = [
 								};
 								maxSuper--;
 							};
-						};
+						} else {
+							table.rows[pos[1]].cells[pos[0]].innerHTML = "🌮";
+						}
 						first = false;
 						steps += 1;
 						if(!restart){
@@ -214,6 +302,7 @@ var tutorialLevels = [
 						if(jump == 1) jump = 0;
 						if(rocket == 2) rocket = 0;
 						table.rows[pos[1]].cells[pos[0]].className = "unvisited";
+						table.rows[pos[1]].cells[pos[0]].innerHTML = "🌮";
 						//Randomly generate a SUPERTACO which makes you do a jump
 						if(oldlevel[i].split('_')[1] !== undefined){
 							if(oldlevel[i].split('_')[1] === 'r'){
@@ -313,82 +402,7 @@ function checkNewMoves(){
 		}
 	}
 }
-	function moveFunction(event,elem=null){
-
-		var key = 0;
-		if(event.type.indexOf("swipe") > -1){
-			if(event.type == "swipeleft"){
-				key = 0;
-			} else if(event.type == "swipeup"){
-				key = 1;
-			} else if(event.type == "swiperight"){
-				key = 2;
-			} else if (event.type == "swipedown"){
-				key = 3;
-			}
-		} else if(event.type.indexOf("click") > -1 || event.type.indexOf('tap') > -1) {
-			if(elem !== null){
-				elemRow = parseInt(elem.parentElement.id);
-				elemCol = elem.cellIndex;
-				console.log(player.x, player.y,elemCol,elemRow);
-				if(hasClass(elem,'moveto')){
-					if(player.x !== elemCol){
-						if(elemCol > player.x){
-							key = 2;
-						} else {
-							key = 0;
-						}
-					} else{
-						if(elemRow > player.y){
-							key = 3;
-						} else {
-							key = 1;
-						}
-					}
-				} else {
-					key = null;
-				}
-			}
-		}
-		else {
-			key = event.keyCode - 37;
-			event.preventDefault();
-		};
-		var allowMove = false;
-		for (var i = directions.length; i >= 0; i--) {
-			if(i == key){
-				if( ((player.x + (1+player.super+player.rocket)*dPos[key][0]) >= 0)
-					&& ((player.x + (1+player.super+player.rocket)*dPos[key][0]) < gameSize)
-					&& ((player.y + (1+player.super+player.rocket)*dPos[key][1]) >= 0)
-					&& ((player.y + (1+player.super+player.rocket)*dPos[key][1]) < gameSize) ){
-					allowMove = true;
-				};
-			};
-		};
-		if(allowMove == true){
-			console.log('dPos['+key+']',dPos[key]);
-			player.oldx = player.x;
-			player.oldy = player.y;
-			player.x += (1+player.super+player.rocket)*dPos[key][0];
-			player.y += (1+player.super+player.rocket)*dPos[key][1];
-			if(!movePlayer()){
-				player.x = player.oldx;
-				player.y = player.oldy;
-			}
-			// player has been moved
-			checkNewMoves();
-
-
-		};
-		if(key == 82 - 37){
-			// r
-			reloadPage();
-		}
-		if(debug == true){
-			document.getElementById("x_pos").innerHTML = player.x;
-			document.getElementById("y_pos").innerHTML = player.y;
-		};
-	}
+	
 
 	function hasClass(element, cls){
 		return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
@@ -417,6 +431,7 @@ function checkNewMoves(){
 				player.rocket = 0;
 			};
 			table.rows[player.oldy].cells[player.oldx].className="visited";
+			table.rows[player.oldy].cells[player.oldx].innerHTML = "💩";
 			cell.className="player";
 			player.points += 1;
 			document.getElementById("points").innerHTML = player.points + "/" + maxPoints;
